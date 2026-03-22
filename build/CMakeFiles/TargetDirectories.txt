@@ -1,0 +1,3 @@
+/home/suriza/Documents/ppse/build/CMakeFiles/my_app.dir
+/home/suriza/Documents/ppse/build/CMakeFiles/edit_cache.dir
+/home/suriza/Documents/ppse/build/CMakeFiles/rebuild_cache.dir

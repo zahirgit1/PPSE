@@ -9,6 +9,10 @@ add_executable(test_fullstart_chain
     source_generateur.c
     codec_repetition_encode.c
     bpsk_mod.c
+    noise_gen.c
     main.c 
-
 )
+target_link_libraries(test_fullstart_chain m)
+add_executable(compare compare_noise_main.c
+    noise_gen.c)
+target_link_libraries(compare m)

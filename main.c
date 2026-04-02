@@ -8,7 +8,7 @@ int main(){
 
 	size_t K = 10;
 	size_t n_reps = 4;
-	float sigma = 0.6f;
+	float sigma = 0.4f;
 	printf("sigma %f \n", sigma);
 	uint8_t U_k[K];
 	uint8_t C_N[K * n_reps];

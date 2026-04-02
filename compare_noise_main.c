@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <math.h>
 #include <time.h>
+#include "chaine_com.h"
 int main() {
     size_t N = 100000; // 100,000 samples
     float sigma = 1.0f;

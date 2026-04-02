@@ -19,7 +19,7 @@ void channel_AWGN_add_noise(const int32_t *X_N, float *Y_N, size_t N, float sigm
         if (u1 < 1e-9f) u1 = 1e-9f;
 
         noise = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * (float)M_PI * u2);
-        Y_N[i] = (float)X_N[i] + (noise );
+        Y_N[i] = (float)X_N[i] + (noise*sigma );
     }
 }
 

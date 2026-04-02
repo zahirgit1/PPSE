@@ -19,12 +19,14 @@ void channel_AWGN_add_noise(const int32_t *X_N, float *Y_N, size_t N, float sigm
         if (u1 < 1e-9f) u1 = 1e-9f;
 
         noise = sqrtf(-2.0f * logf(u1)) * cosf(2.0f * (float)M_PI * u2);
-        Y_N[i] = (float)X_N[i] + (noise*sigma );
-    }
+
+
+        Y_N[i] = (float)X_N[i] + (noise * sigma );
+    }   
 }
 
 void channel_AWGN_ctl(const int32_t *X_N, float *Y_N, size_t N, float sigma){
-    // Seed the random number generator
+
     srand((unsigned int)time(NULL));
 
     for (size_t i = 0; i < N; i++) {

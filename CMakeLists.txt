@@ -10,6 +10,10 @@ add_executable(test_fullstart_chain
     codec_repetition_encode.c
     bpsk_mod.c
     noise_gen.c
+    bpsk_demod.c
+    soft_decode.c
+    hard_decode.c
+    monitor.c
     main.c 
 )
 target_link_libraries(test_fullstart_chain m)

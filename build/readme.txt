@@ -1,1 +1,0 @@
-type cmake .. then make

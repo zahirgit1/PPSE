@@ -4,3 +4,4 @@
 !.gitignore
 # and the README
 !readme.txt
+!run_simulations.sh

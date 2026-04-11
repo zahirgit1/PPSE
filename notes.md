@@ -34,3 +34,7 @@ X=sqrt(-2 * log(U1)) * cos(2pi * U2)
 Y=sqrt(-2 * log(U1)) * sin(2pi * U2)
 ```
 heavier on the calculation but mathematically exact 
+
+## time-dating :
+* will be using clock_gettime rather than clock stable and more precise in longer simulations
+  

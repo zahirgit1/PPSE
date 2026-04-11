@@ -54,7 +54,7 @@ float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
     // Success - Print parameters
     printf("Simulation Params: SNR [%.2f : %.2f] Step: %.2f, K: %u, N: %u, Decoder: %s\n", 
             min_SNR, max_SNR, step_val, K, N, decoder_type);
-    FILE *csv_file = fopen("../simulations/sim1.csv", "w");
+    FILE *csv_file = fopen("../simulations/sim.csv", "w");
     if (csv_file == NULL) {
         fprintf(stderr, "Error opening CSV file!\n");
         return 1;

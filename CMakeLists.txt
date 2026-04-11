@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.10)
 project(MyAwesomeProject C)
 
 # 3. Specify the executable name and the source files to include
-add_executable(test_fullstart_chain
+add_executable(simulator
     source_generateur.c
     codec_repetition_encode.c
     bpsk_mod.c
@@ -16,7 +16,7 @@ add_executable(test_fullstart_chain
     monitor.c
     main.c 
 )
-target_link_libraries(test_fullstart_chain m)
+target_link_libraries(simulator m)
 add_executable(compare compare_noise_main.c
     noise_gen.c)
 target_link_libraries(compare m)

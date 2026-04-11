@@ -2,48 +2,102 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
+#include <string.h>
+#include <getopt.h>
 #include "chaine_com.h"
 
 int main(int argc, char *argv[]) {
-	if (argc != 5) {
-		printf("Usage: %s <K> <n_reps> <sigma> <frames>\n", argv[0]);
-		return 1;
-	}
-	size_t K = atoi(argv[1]);
-	size_t n_reps = atoi(argv[2]);
-	float sigma = atof(argv[3]);
-	int frames = atoi(argv[4]);
-	printf("sigma %f \n", sigma);
-	uint8_t U_k[K];
-	uint8_t C_N[K * n_reps];
-	int32_t X_N[K * n_reps];
-	float Y_N[K * n_reps];
-	float L_N[K * n_reps];
-	uint8_t V_K_hard[K];
-	uint8_t V_K_soft[K];
-	uint64_t n_bit_errors_hard = 0;		
-	uint64_t n_frame_errors_hard = 0;
-	uint64_t n_bit_errors_soft = 0;		
-	uint64_t n_frame_errors_soft = 0;
-	srand((unsigned int)time(NULL));
-	for (int i = 0; i < frames; i++) {
-	
-		source_generate(U_k, K);
-		codec_repetition_encode(U_k, C_N, K, n_reps);
-		modem_bpsk_modulate(C_N, X_N, K * n_reps);
-		channel_AWGN_add_noise(X_N, Y_N, K * n_reps, sigma);
-		modem_BPSK_demodulate(Y_N, L_N, K * n_reps, sigma);
-		codec_repetition_hard_decode(L_N, V_K_hard, K, n_reps);
-		codec_repetition_soft_decode(L_N, V_K_soft, K, n_reps);
-		monitor_check_errors(U_k, V_K_hard, K, &n_bit_errors_hard, &n_frame_errors_hard);
-		monitor_check_errors(U_k, V_K_soft, K, &n_bit_errors_soft, &n_frame_errors_soft);
-	}
-	float fer_hard = (float)n_frame_errors_hard / frames;
-	float ber_hard = (float)n_bit_errors_hard / (frames * K);
-	float fer_soft = (float)n_frame_errors_soft / frames;
-	float ber_soft = (float)n_bit_errors_soft / (frames * K);
-	printf("Hard Decode: Bit Errors = %lu, Frame Errors = %lu, BER = %f, FER = %f\n", n_bit_errors_hard, n_frame_errors_hard, ber_hard, fer_hard);
-	printf("Soft Decode: Bit Errors = %lu, Frame Errors = %lu, BER = %f, FER = %f\n", n_bit_errors_soft, n_frame_errors_soft, ber_soft, fer_soft);
-	return 0;				
+float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
+    uint32_t f_max = 100, K = 0, N = 0;
+    char decoder_type[20] = "rep-hard";
 
+    int opt;
+    // The ":" after a letter means that flag requires an argument
+    while ((opt = getopt(argc, argv, "m:M:s:e:K:N:D:")) != -1) {
+        switch (opt) {
+            case 'm': min_SNR = atof(optarg); break;
+            case 'M': max_SNR = atof(optarg); break;
+            case 's': step_val = atof(optarg); break;
+            case 'e': f_max = (uint32_t)atoi(optarg); break;
+            case 'K': K = (uint32_t)atoi(optarg); break;
+            case 'N': N = (uint32_t)atoi(optarg); break;
+            case 'D': 
+                strncpy(decoder_type, optarg, sizeof(decoder_type) - 1); 
+                break;
+            default:
+                fprintf(stderr, "Usage: %s -m min -M max -s step -e errors -K bits -N codeword -D type\n", argv[0]);
+                exit(EXIT_FAILURE);
+        }
+    }
+
+    // --- Validation Logic ---
+
+    // 1. Check if K and N were provided
+    if (K == 0 || N == 0) {
+        fprintf(stderr, "Error: K and N are mandatory and must be greater than 0.\n");
+        exit(EXIT_FAILURE);
+    }
+
+    // 2. Check if N is a multiple of K
+    if (N % K != 0) {
+        fprintf(stderr, "Error: Codeword size N (%u) must be a multiple of info bits K (%u).\n", N, K);
+        exit(EXIT_FAILURE);
+    }
+
+    // 3. Validate Decoder String
+    if (strcmp(decoder_type, "rep-hard") != 0 && strcmp(decoder_type, "rep-soft") != 0) {
+        fprintf(stderr, "Error: Decoder must be 'rep-hard' or 'rep-soft'.\n");
+        exit(EXIT_FAILURE);
+    }
+    
+    // Success - Print parameters
+    printf("Simulation Params: SNR [%.2f : %.2f] Step: %.2f, K: %u, N: %u, Decoder: %s\n", 
+            min_SNR, max_SNR, step_val, K, N, decoder_type);
+
+    float R = (float)N / (float)K;
+	float b_s = 1.0f; // BPSK 
+	uint8_t U_k[K];
+	uint8_t C_N[N];
+	int32_t X_N[N];
+	float Y_N[N];
+	float L_N[N];
+	uint8_t V_K[K];
+	float ber, fer = 0.0f;
+	for (float ebno_db = min_SNR; ebno_db <= max_SNR; ebno_db += step_val) {
+		
+		// Calculate Es/N0 in dB using your formula
+		float esno_db = ebno_db + 10.0f * log10f(R * b_s);
+		
+		// Now convert Es/N0 dB to linear to find Sigma
+		float esno_linear = powf(10.0f, esno_db / 10.0f);
+		
+		// Sigma for BPSK is sqrt(1 / (2 * EsN0_linear))
+		float sigma = sqrtf(1.0f / (2.0f * esno_linear));
+        long  frames = 0;
+        uint64_t n_bit_errors =0;
+		uint64_t n_frame_errors= 0;
+        size_t n_reps = N/K;
+
+		printf("EbN0: %.2f dB -> EsN0: %.2f dB (Sigma: %.4f)\n", ebno_db, esno_db, sigma);
+
+		while(n_frame_errors<100){				
+			source_generate(U_k, K);
+			codec_repetition_encode(U_k, C_N, K, n_reps);
+			modem_bpsk_modulate(C_N, X_N, N);
+			channel_AWGN_add_noise(X_N, Y_N, N, sigma);
+			modem_BPSK_demodulate(Y_N, L_N, N, sigma);
+			if(decoder_type=="rep-hard") codec_repetition_hard_decode(L_N, V_K, K, n_reps);
+			else codec_repetition_soft_decode(L_N, V_K, K, n_reps);
+			monitor_check_errors(U_k, V_K, K, &n_bit_errors, &n_frame_errors);
+            frames++;
+		}
+	
+	fer = (float)n_frame_errors/ frames;
+	ber = (float)n_bit_errors / (frames * K);
+    printf("%s: Bit Errors = %lu, Total Frames = %ld Frame Errors = %lu, BER = %f, FER = %f\n",decoder_type, n_bit_errors,frames, n_frame_errors, ber, fer);
+
+	}
+
+    return 0;
 }

@@ -117,10 +117,10 @@ float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
 	ber = (float)n_bit_errors / (frames * K);
     double time_spent = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1e9;
     double time_per_frame = time_spent / frames;
-    printf("Time taken for SNR %.6f dB: %.6f seconds\n", ebno_db, time_spent);
-    printf("Average time per frame: %.6f seconds\n", time_per_frame);
-    printf("%s: Bit Errors = %lu, Total Frames = %ld Frame Errors = %lu, BER = %f, FER = %f\n",decoder_type, n_bit_errors,frames, n_frame_errors, ber, fer);
-    fprintf(csv_file, "%.6f,%.6f,%.6f,%lu,%lu,%lu,%f,%f,%.6f,%.6f\n", ebno_db, esno_db, sigma, n_bit_errors, frames, n_frame_errors, ber, fer, time_spent, time_per_frame);
+    printf("Time taken for SNR %.8f dB: %.8f seconds\n", ebno_db, time_spent);
+    printf("Average time per frame: %.8f seconds\n", time_per_frame);
+    printf("%s: Bit Errors = %lu, Total Frames = %ld Frame Errors = %lu, BER = %.8f, FER = %.8f\n",decoder_type, n_bit_errors,frames, n_frame_errors, ber, fer);
+    fprintf(csv_file, "%.8f,%.8f,%.8f,%lu,%lu,%lu,%.8f,%.8f,%.8f,%.8f\n", ebno_db, esno_db, sigma, n_bit_errors, frames, n_frame_errors, ber, fer, time_spent, time_per_frame);
     fflush(csv_file);
 	}
 

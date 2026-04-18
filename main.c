@@ -120,7 +120,7 @@ float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
     printf("Time taken for SNR %.8f dB: %.8f seconds\n", ebno_db, time_spent);
     printf("Average time per frame: %.8f seconds\n", time_per_frame);
     printf("%s: Bit Errors = %lu, Total Frames = %ld Frame Errors = %lu, BER = %.8f, FER = %.8f\n",decoder_type, n_bit_errors,frames, n_frame_errors, ber, fer);
-    fprintf(csv_file, "%.8f,%.8f,%.8f,%lu,%lu,%lu,%.8f,%.8f,%.8f,%.8f\n", ebno_db, esno_db, sigma, n_bit_errors, frames, n_frame_errors, ber, fer, time_spent, time_per_frame);
+    fprintf(csv_file, "%.8f,%.8f,%.8f,%lu,%lu,%lu,%.8f,%.8f,%.8f,%.8f\n", ebno_db, esno_db, sigma, n_bit_errors, n_frame_errors,frames, ber, fer, time_spent, time_per_frame);
     fflush(csv_file);
 	}
 

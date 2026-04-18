@@ -3,8 +3,10 @@ PPSE coder and decoder chain simulation
 
 ## arborescence :
  bpsk_mod.c, codec_repetion,source_generate : fichier source des fonctions utilisees
- main.c : programme c qui teste tout le debut de la caine
+ main.c : the main code for running the simulation
  notes.md : notes pour plutard
  ./build : cmake file (cleaned)
+ ./simulation : files containing the graphs and the simulation .csv files
+
 
 

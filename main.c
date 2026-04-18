@@ -33,25 +33,21 @@ float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
 
     // --- Validation Logic ---
 
-    // 1. Check if K and N were provided
     if (K == 0 || N == 0) {
         fprintf(stderr, "Error: K and N are mandatory and must be greater than 0.\n");
         exit(EXIT_FAILURE);
     }
 
-    // 2. Check if N is a multiple of K
     if (N % K != 0) {
         fprintf(stderr, "Error: Codeword size N (%u) must be a multiple of info bits K (%u).\n", N, K);
         exit(EXIT_FAILURE);
     }
 
-    // 3. Validate Decoder String
     if (strcmp(decoder_type, "rep-hard") != 0 && strcmp(decoder_type, "rep-soft") != 0) {
         fprintf(stderr, "Error: Decoder must be 'rep-hard' or 'rep-soft'.\n");
         exit(EXIT_FAILURE);
     }
-    
-    // Success - Print parameters
+
     printf("Simulation Params: SNR [%.2f : %.2f] Step: %.2f, K: %u, N: %u, Decoder: %s\n", 
             min_SNR, max_SNR, step_val, K, N, decoder_type);
     FILE *csv_file = fopen("../simulations/sim.csv", "w");
@@ -71,15 +67,13 @@ float min_SNR = 0.0f, max_SNR = 0.0f, step_val = 1.0f;
 	uint8_t V_K[K];
 	float ber, fer = 0.0f;
 	for (float ebno_db = min_SNR; ebno_db <= max_SNR; ebno_db += step_val) {
-		// Calculate Es/N0 in dB using your formula
         struct timespec start, end;
         
 		float esno_db = ebno_db + 10.0f * log10f(R * b_s);
 		
-		// Now convert Es/N0 dB to linear to find Sigma
+
 		float esno_linear = powf(10.0f, esno_db / 10.0f);
-		
-		// Sigma for BPSK is sqrt(1 / (2 * EsN0_linear))
+)
 		float sigma = sqrtf(1.0f / (2.0f * esno_linear));
         long  frames = 0;
         uint64_t n_bit_errors =0;

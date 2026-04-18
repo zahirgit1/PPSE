@@ -6,9 +6,9 @@ chmod +x ./simulator
 echo "Starting Simulation Batch..."
 
 # Sim 1: Hard Decoding (N=128)
-#echo "Running Sim 1 (Hard, N=128)..."
-#./simulator -m 0 -M 15 -s 1 -e 100 -K 32 -N 128 -D "rep-hard"
-#mv ../simulations/sim.csv ../simulations/sim1.csv
+echo "Running Sim 1 (Hard, N=128)..."
+./simulator -m 0 -M 15 -s 1 -e 100 -K 32 -N 128 -D "rep-hard"
+mv ../simulations/sim.csv ../simulations/sim1.csv
 
 # Sim 2: Soft Decoding (N=128)
 echo "Running Sim 2 (Soft, N=128)..."

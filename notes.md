@@ -37,4 +37,24 @@ heavier on the calculation but mathematically exact
 
 ## time-dating :
 * will be using clock_gettime rather than clock stable and more precise in longer simulations
+* throughput calculation for each block is conducted by a macro called MEASURE_BLOCK 
+## MEASURE_BLOCK :
+* struct : total time spent on the called function ,minimum and maximum latency thats updated each snr point, number of bits output of the function, and the name of the called function
+* init_stat 
+* updating the stats
+## Quantization module
+the logic behind is to not just cast float to int8 because we will lose information, example 0.75 will be 0 if converted directly to int8 (L8_N[i] = (int8_t)L_N[i];)
+// transform numbers from floating-point representation to fixed-point representation
+// `s` is the number of bits used in the quantizer block
+// `f` is the number of bits of the fractional part (`s` >= `f`)
+* f represents the step its the factor  (2^f) so if we take our example and we want to transfer our float 0.75 to int8 our value will be 0 75*2^f, knowing the f we can recover our initial float information.
+
+* this operation is done on int32 before being converted to int8 to convert it we must use roundf to the scaled float to round to the nearest integer then we cast from int32 to int8 (of course we need to cap it at our max and min values designated my the argument s or else we will have an overflow)
+* the goal here is to find the best pair of s and f that outputs the best throughput
+## Best pairs :
+* sim1 =(0,1) hard decode only needs the sign.
+* sim2 =(2,4) needs more precision .
+* sim3 =(3,4) . 
+* sim4 = (3,4) .
+* sim5 = (0,1) acts like a hard decoder
   

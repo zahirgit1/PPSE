@@ -13,6 +13,7 @@ add_executable(simulator
     soft_decode.c
     hard_decode.c
     monitor.c
+    quantizer.c
     main.c 
 )
 

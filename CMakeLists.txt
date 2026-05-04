@@ -20,6 +20,9 @@ add_executable(simulator
 # 2. Link the math library
 target_link_libraries(simulator m)
 
+# Add optimization flags
+# target_compile_options(simulator PRIVATE -O3 -march=native)
+
 # 3. Only add the definition if the option is ON
 if(USE_STATS)
     target_compile_definitions(simulator PRIVATE ENABLE_STATS)
@@ -29,3 +32,4 @@ endif()
 # (Your compare executable remains the same)
 add_executable(compare compare_noise_main.c noise_gen.c)
 target_link_libraries(compare m)
+target_compile_options(compare PRIVATE -O3 -march=native)

@@ -57,4 +57,7 @@ the logic behind is to not just cast float to int8 because we will lose informat
 * sim3 =(3,4) . 
 * sim4 = (3,4) .
 * sim5 = (0,1) acts like a hard decoder
+*for the final soft decode simulation i will be using s = 6 f = 1 for the FER to be close to each other 
+For the neon decoder we aRE LIMITED BY THE LOSS of precision of the int8 if we use accumulative adding by vector(check the decode file its the technique i used to callculate the sun of mu;itple arrays) using only the instructions given i cannot prevent further loss we will use s- 5 and f = 0 for the neon decoder 
+
   

@@ -7,6 +7,7 @@ PPSE coder and decoder chain simulation
 *  notes.md : notes pour plutard
 * ./build : cmake file (cleaned)
 * ./simulation : files containing the graphs and the simulation .csv files
+* ./simulation/compare : contains the simulations of lab 4 
 ## simulation throuput :
 ### src all zeros:
 in this i will only take in considiration for the time being an snr 9 point in a soft decoder

@@ -124,8 +124,9 @@ int main(int argc, char *argv[]) {
     }
 
     if (strcmp(decoder_type, "rep-hard") != 0 && strcmp(decoder_type, "rep-soft") != 0 &&
-        strcmp(decoder_type, "rep-hard8") != 0 && strcmp(decoder_type, "rep-soft8") != 0) {
-        fprintf(stderr, "Error: Decoder must be 'rep-hard', 'rep-soft', 'rep-hard8' or 'rep-soft8'.\n");
+        strcmp(decoder_type, "rep-hard8") != 0 && strcmp(decoder_type, "rep-soft8") != 0 &&
+        strcmp(decoder_type, "rep-hard8-neon") != 0 && strcmp(decoder_type, "rep-soft8-neon") != 0) {
+        fprintf(stderr, "Error: Decoder must be 'rep-hard', 'rep-soft', 'rep-hard8', 'rep-soft8', 'rep-hard8-neon' or 'rep-soft8-neon'.\n");
         exit(EXIT_FAILURE);
     }
 
@@ -178,8 +179,11 @@ int main(int argc, char *argv[]) {
         clock_gettime(CLOCK_MONOTONIC, &start);
 
 
-            while(n_frame_errors<100){		
-                if(src_all_zeros) {
+            while(n_frame_errors<100){
+                if(mod_all_ones ) {
+                    memset(U_k, 0, K); // All zeros at source will lead to all ones after modulation, so we can skip source generation
+                }		
+                else if(src_all_zeros) {
                     MEASURE_BLOCK(s_src, source_generate_all_zeros(U_k, K), K);
                 }
                 else {		
@@ -207,6 +211,10 @@ int main(int argc, char *argv[]) {
                     MEASURE_BLOCK(s_dec, codec_repetition_hard_decode8(L8_N, V_K, K, n_reps), K);
                 } else if (strcmp(decoder_type, "rep-soft8") == 0) {
                     MEASURE_BLOCK(s_dec, codec_repetition_soft_decode8(L8_N, V_K, K, n_reps), K);
+                } else if (strcmp(decoder_type, "rep-hard8-neon") == 0) {
+                    MEASURE_BLOCK(s_dec, codec_repetition_hard_decode8_neon(L8_N, V_K, K, n_reps), K);
+                } else if (strcmp(decoder_type, "rep-soft8-neon") == 0) {
+                    MEASURE_BLOCK(s_dec, codec_repetition_soft_decode8_neon(L8_N, V_K, K, n_reps), K);
                 }
                 MEASURE_BLOCK(s_mon, monitor_check_errors(U_k, V_K, K, &n_bit_errors, &n_frame_errors), K);
                 frames++;

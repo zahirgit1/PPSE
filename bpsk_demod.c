@@ -12,9 +12,8 @@ void modem_BPSK_demodulate(const float *Y_N, float *L_N, size_t N, float sigma){
 }
 
 /**
- * High-performance NEON-vectorized BPSK demodulator
+ * NEON-vectorized BPSK demodulator
  * Processes 4 float32 samples per iteration using NEON
- * Optimal for large N (>1000)
  */
 void modem_BPSK_demodulate_neon(const float *Y_N, float *L_N, size_t N, float sigma){
     size_t i = 0;

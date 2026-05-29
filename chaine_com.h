@@ -54,7 +54,5 @@ void monitor_check_errors_neon(const uint8_t *U_K, const uint8_t *V_K, size_t K,
 // --- BIT PACKING ---
 void pack_bits(const uint8_t *unpacked, uint8_t *packed, size_t num_unpacked);
 void unpack_bits(const uint8_t *packed, uint8_t *unpacked, size_t num_packed);
-void pack_bits_neon(const uint8_t *unpacked, uint8_t *packed, size_t num_unpacked);
-void unpack_bits_neon(const uint8_t *packed, uint8_t *unpacked, size_t num_packed);
 
 #endif

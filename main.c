@@ -47,7 +47,6 @@ double get_diff(struct timespec start, struct timespec end) {
     if (lat > stats.max_latency) stats.max_latency = lat; \
 }// Macro to measure block latency and update stats
 #else
-// If stats disabled, just call the function normally
 
 #define MEASURE_BLOCK(stats, block_call, bits) block_call
 #endif
@@ -60,7 +59,6 @@ int use_neon_mon = 0;    // Flag to use NEON monitor
 int use_neon_enc = 0;    // Flag to use NEON encoder
 int use_muller = 0;      // Flag to use vectorized Box-Muller channel
 int use_packed = 0;      // Flag to use packed source with scalar unpack
-int use_packed_neon = 0; // Flag to use packed source with NEON unpack
 int use_packed_mersenne = 0; // Flag to use packed source with vectorized Mersenne Twister
 static struct option long_options[] = {
     {"src-all-zeros", no_argument, 0, 'z'}, // We'll map it to 'z' internally
@@ -70,10 +68,8 @@ static struct option long_options[] = {
     {"neonmon", no_argument, 0, 1001},        // Use NEON monitor (long-only)
     {"neonenc", no_argument, 0, 1005},        // Use NEON encoder (long-only)
     {"packed", no_argument, 0, 1002},         // Use packed source with scalar unpack (long-only)
-    {"packedneon", no_argument, 0, 1003},     // Use packed source with NEON unpack (long-only)
-    {"mersenne", no_argument, 0, 1004}, 
-    {"muller", no_argument, 0, 1007},         // Use vectorized Box-Muller channel (long-only)      // Use packed source with vectorized Mersenne Twister (long-only)
-    {"qf", required_argument, 0, 'f'},
+    {"mersenne", no_argument, 0, 1004},        // Use packed source with vectorized Mersenne Twister (long-only)
+    {"muller", no_argument, 0, 1007},         // Use vectorized Box-Muller channel (long-only)     
     {"qs", required_argument, 0, 'q'},
 
     {0, 0, 0, 0}
@@ -140,9 +136,6 @@ int main(int argc, char *argv[]) {
             case 1002:  // --packed (long option only, scalar unpack)
                 use_packed = 1;
                 break;
-            case 1003:  // --packedneon (long option only, NEON unpack)
-                use_packed_neon = 1;
-                break;
             case 1004:  // --mersenne (long option only, vectorized Mersenne Twister)
                 use_packed_mersenne = 1;
                 break;
@@ -183,16 +176,12 @@ int main(int argc, char *argv[]) {
         exit(EXIT_FAILURE);
     }
 
-    if (use_packed_neon && K % 8 != 0) {
-        fprintf(stderr, "Error: When using --packedneon, K (%u) must be a multiple of 8.\n", K);
-        exit(EXIT_FAILURE);
-    }
     if (use_packed_mersenne && K % 8 != 0) {
         fprintf(stderr, "Error: When using --mersenne, K (%u) must be a multiple of 8.\n", K);
         exit(EXIT_FAILURE);
     }
-    if ((use_packed + use_packed_neon + use_packed_mersenne) > 1) {
-        fprintf(stderr, "Error: Cannot use --packed, --packedneon, and --mersenne together. Use only one.\n");
+    if ((use_packed + use_packed_mersenne) > 1) {
+        fprintf(stderr, "Error: Cannot use --packed and --mersenne together. Use only one.\n");
         exit(EXIT_FAILURE);
     }
     if (strcmp(decoder_type, "rep-hard") != 0 && strcmp(decoder_type, "rep-soft") != 0 &&
@@ -205,7 +194,7 @@ int main(int argc, char *argv[]) {
     printf("Simulation Params: SNR [%.2f : %.2f] Step: %.2f, K: %u, N: %u, Decoder: %s\n", 
             min_SNR, max_SNR, step_val, K, N, decoder_type);
 
-    // Initialize Mersenne Twister PRNG with time-based seed
+    // Initialize Mersenne Twister PRNG with time-based seed or a set seed for reproducibility
    // mt19937_init((uint32_t)time(NULL));
     mt19937_init(1000);
     // Open CSV file 
@@ -269,9 +258,6 @@ int main(int argc, char *argv[]) {
                     if (use_packed) {
                         MEASURE_BLOCK(s_src, source_generate_packed_all_zeros(U_k_packed, K), K/8);
                         MEASURE_BLOCK(s_unpack, unpack_bits(U_k_packed, U_k, K/8), K);
-                    } else if (use_packed_neon) {
-                        MEASURE_BLOCK(s_src, source_generate_packed_all_zeros(U_k_packed, K), K/8);
-                        MEASURE_BLOCK(s_unpack, unpack_bits_neon(U_k_packed, U_k, K/8), K);
                     } else if (use_packed_mersenne) {
                         MEASURE_BLOCK(s_src, source_generate_packed_all_zeros(U_k_packed, K), K/8);
                         MEASURE_BLOCK(s_unpack, unpack_bits(U_k_packed, U_k, K/8), K);
@@ -283,9 +269,6 @@ int main(int argc, char *argv[]) {
                     if (use_packed) {
                         MEASURE_BLOCK(s_src, source_generate_packed(U_k_packed, K), K/8);
                         MEASURE_BLOCK(s_unpack, unpack_bits(U_k_packed, U_k, K/8), K);
-                    } else if (use_packed_neon) {
-                        MEASURE_BLOCK(s_src, source_generate_packed(U_k_packed, K), K/8);
-                        MEASURE_BLOCK(s_unpack, unpack_bits_neon(U_k_packed, U_k, K/8), K);
                     } else if (use_packed_mersenne) {
                         MEASURE_BLOCK(s_src, source_generate_packed_mersenne(U_k_packed, K), K/8);
                         MEASURE_BLOCK(s_unpack, unpack_bits(U_k_packed, U_k, K/8), K);

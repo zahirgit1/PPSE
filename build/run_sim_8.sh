@@ -30,4 +30,4 @@ echo "Running Sim 5 (Soft8, N=32)..."
 ./simulator -m 0 -M 12 -s 1 -e 100 -K 32 -N 32 -D "rep-soft8" --qf 0 --qs 1
 mv ../simulations/sim.csv ../simulations/sim5_8.csv
 
-echo "All simulations complete. Check your .csv files."
+echo "All simulations complete. Check .csv files."

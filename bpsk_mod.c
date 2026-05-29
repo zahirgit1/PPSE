@@ -15,19 +15,18 @@ void modem_bpsk_modulate_all_ones(const uint8_t *C_N, int32_t *X_N, size_t N){
 }
 
 /**
- * High-performance NEON-vectorized BPSK modulator (int32_t version)
- * Maps input bits (0/1) to output symbols (+1/-1)
+ * NEON-vectorized BPSK modulator (int32_t version)
  * Processes 16 samples per iteration for maximum throughput
  */
 void modem_bpsk_modulate_neon_i32(const uint8_t *C_N, int32_t *X_N, size_t N){
     size_t i = 0;
     
-    // NEON constants
+    //constants
     const int32x4_t ones = vdupq_n_s32(1);
     const int32x4_t neg_ones = vdupq_n_s32(-1);
     const uint8x16_t zero_vec = vdupq_n_u8(0);
     
-    // Process 16 bytes at a time
+    // Process 16 bytes
     const size_t chunk_size = 16;
     
     for (; i + chunk_size <= N; i += chunk_size) {
@@ -69,8 +68,7 @@ void modem_bpsk_modulate_neon_i32(const uint8_t *C_N, int32_t *X_N, size_t N){
 }
 
 /**
- * Ultra-high-performance int8_t NEON-vectorized BPSK modulator
- * Maps input bits (0/1) to output symbols (+1/-1) stored in int8_t
+ * NEON-vectorized BPSK modulator (int8_t version)
  * Processes 16 samples per iteration directly in int8_t precision
  * 4x memory efficient compared to int32_t version
  */

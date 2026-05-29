@@ -16,7 +16,6 @@ void codec_repetition_encode(uint8_t *U_k,  uint8_t *C_N, size_t K, size_t n_rep
 /**
  * NEON-vectorized repetition encoder
  * Processes 16 input bytes at a time for each repetition
- * Performance: ~16x faster for large K due to SIMD parallelism
  */
 void codec_repetition_encode_neon(uint8_t *U_k, uint8_t *C_N, size_t K, size_t n_reps){
     // Process each repetition, then vectorize within it
@@ -28,11 +27,6 @@ void codec_repetition_encode_neon(uint8_t *U_k, uint8_t *C_N, size_t K, size_t n
         for (; i + 16 <= K; i += 16) {
             uint8x16_t input = vld1q_u8(&U_k[i]);
             vst1q_u8(&C_N[out_offset + i], input);
-        }
-        
-        // Handle remaining bytes (< 16) with scalar
-        for (; i < K; i++) {
-            C_N[out_offset + i] = U_k[i];
-        }
+        }        
     }
 }

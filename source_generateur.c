@@ -43,10 +43,6 @@ void source_generate_packed_all_zeros(uint8_t *U_K_packed, size_t K) {
 }
 
 /**
- * Generate source bits in PACKED form using vectorized Mersenne Twister
- * K must be a multiple of 8
- * Output: K/8 bytes, each containing random bits from MT19937
- * 
  * Uses NEON SIMD (4-lane vectorization) for superior performance
  * Generates 4 uint32_t values at once, packing 16 bytes per iteration
  * 

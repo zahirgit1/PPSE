@@ -6,3 +6,5 @@
 !readme.txt
 !run_simulations.sh
 !run_sim_8.sh
+!run_sim_neon.sh
+!run_sim_neon_mersenne.sh

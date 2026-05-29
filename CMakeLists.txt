@@ -14,14 +14,16 @@ add_executable(simulator
     hard_decode.c
     monitor.c
     quantizer.c
+    bit_packing.c
+    mersenne_19937.c
     main.c 
 )
 
 # 2. Link the math library
 target_link_libraries(simulator m)
 
-# Add optimization flags
-# target_compile_options(simulator PRIVATE -O3 -march=native)
+# Add optimization flags with NEON support
+target_compile_options(simulator PRIVATE -O3 -march=native)
 
 # 3. Only add the definition if the option is ON
 if(USE_STATS)
@@ -30,6 +32,6 @@ if(USE_STATS)
 endif()
 
 # (Your compare executable remains the same)
-add_executable(compare compare_noise_main.c noise_gen.c)
+add_executable(compare compare_noise_main.c noise_gen.c mersenne_19937.c)
 target_link_libraries(compare m)
 target_compile_options(compare PRIVATE -O3 -march=native)

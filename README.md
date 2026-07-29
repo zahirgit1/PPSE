@@ -1,5 +1,7 @@
 # PPSE
 PPSE coder and decoder chain simulation
+Please refer to the Final_report section for a detailled explanation of the project.
+
 
 ## arborescence :
 * bpsk_mod.c, codec_repetion,source_generate : fichier source des fonctions utilisees

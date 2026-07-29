@@ -1,6 +1,5 @@
 # PPSE
-PPSE coder and decoder chain simulation
-Please refer to the Final_report section for a detailled explanation of the project.
+This project simulates an end-to-end communication chain on a NVIDIA Jetson Nano Developer Kit coded in C/C++. Using the Monte Carlo method, the simulation evaluates error rate performance (BER/FER) and throughput across multiple SNR points over the following pipeline:$$\text{Source Generation} \longrightarrow \text{Channel Coding} \longrightarrow \text{Modulation} \longrightarrow \text{AWGN Channel} \longrightarrow \text{Demodulation} \longrightarrow \text{Decoding} \longrightarrow \text{Performance Monitoring}$$The main focus of this implementation was optimizing simulation throughput by leveraging the ARM NEON SIMD vector processing architecture available on the Jetson Nano.For a detailed explanation of the project, architecture, and results, please refer to the Final_report section.
 
 
 ## arborescence :
